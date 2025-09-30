@@ -11,9 +11,9 @@ except ImportError:
     AnthropicProvider = None  # type: ignore
 
 try:
-    from .google import GoogleProvider
-
-    _google_available = True
+    # from .google import GoogleProvider
+    GoogleProvider = None  # type: ignore
+    _google_available = False
 except ImportError:
     _google_available = False
     GoogleProvider = None  # type: ignore

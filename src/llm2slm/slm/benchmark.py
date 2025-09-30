@@ -40,7 +40,11 @@ class SLMBenchmarker:
                 "Translate 'hello world' to Spanish.",
             ]
 
-        results: Dict[str, Any] = {"model_info": model.get_info(), "test_results": [], "performance_metrics": {}}
+        results: Dict[str, Any] = {
+            "model_info": model.get_info(),
+            "test_results": [],
+            "performance_metrics": {},
+        }
         test_results: List[Dict[str, Any]] = results["test_results"]
 
         latencies = []
@@ -116,8 +120,7 @@ class SLMBenchmarker:
         # Calculate comparison metrics
         if len(models) > 1:
             latencies = [
-                result["benchmark"]["performance_metrics"]["avg_latency"]
-                for result in models_list
+                result["benchmark"]["performance_metrics"]["avg_latency"] for result in models_list
             ]
             throughputs = [
                 result["benchmark"]["performance_metrics"]["avg_throughput"]

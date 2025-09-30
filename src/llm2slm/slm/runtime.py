@@ -173,8 +173,7 @@ class SLMRuntime:
         # Calculate comparison metrics
         if len(models) > 1:
             latencies = [
-                result["benchmark"]["performance_metrics"]["avg_latency"]
-                for result in models_list
+                result["benchmark"]["performance_metrics"]["avg_latency"] for result in models_list
             ]
             throughputs = [
                 result["benchmark"]["performance_metrics"]["avg_throughput"]

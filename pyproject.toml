@@ -80,11 +80,11 @@ all = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/llm2slm/llm2slm"
-Documentation = "https://llm2slm.readthedocs.io"
+Homepage = "https://github.com/Kolerr-Lab/llm2slm-oss"
+Documentation = "https://llm2slm-oss.readthedocs.io"
 Repository = "https://github.com/Kolerr-Lab/llm2slm-oss"
-Issues = "https://github.com/llm2slm/llm2slm/issues"
-Changelog = "https://github.com/llm2slm/llm2slm/blob/main/CHANGELOG.md"
+Issues = "https://github.com/Kolerr-Lab/llm2slm-oss/issues"
+Changelog = "https://github.com/Kolerr-Lab/llm2slm-oss/blob/main/CHANGELOG.md"
 
 [project.scripts]
 llm2slm = "llm2slm.cli:main"

@@ -13,9 +13,8 @@ except ImportError:
     anthropic_available = False
 
 try:
-    from llm2slm.providers.google import GoogleProvider  # noqa: F401
-
-    google_available = True
+    # from llm2slm.providers.google import GoogleProvider  # noqa: F401
+    google_available = False
 except ImportError:
     google_available = False
 
