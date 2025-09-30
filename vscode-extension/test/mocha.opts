@@ -1,0 +1,4 @@
+--timeout 10000
+--slow 2000
+--ui tdd
+--require ts-node/register
