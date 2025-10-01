@@ -8,9 +8,6 @@
 [![Coverage](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss/branch/main/graph/badge.svg)](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss)
 
 A robust Python library and CLI tool for converting Large Language Models (LLMs) to optimized Small Language Models (SLMs). Streamline model deployment with provider integrations, containerization, and API access.
-
-A robust Python library and CLI tool for converting Large Language Models (LLMs) to optimized Small Language Models (SLMs). Streamline model deployment with provider integrations, containerization, and API access.
-
 ## Features
 
 - **CLI Interface**: Command-line tools for seamless model conversion and management.
