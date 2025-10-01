@@ -7,6 +7,8 @@ for secure model conversion and deployment.
 
 from typing import TYPE_CHECKING
 
+from llm2slm.privacy.validator import AuditLog, PrivacyLevel, PrivacyValidator
+
 # Check for optional privacy dependencies
 _presidio_available = False
 _detoxify_available = False
@@ -51,7 +53,6 @@ else:
     ContentCategory = None  # type: ignore
     FilterAction = None  # type: ignore
 
-from llm2slm.privacy.validator import AuditLog, PrivacyLevel, PrivacyValidator
 
 __all__ = [
     "PIIAnonymizer",

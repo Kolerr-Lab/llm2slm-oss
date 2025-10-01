@@ -266,7 +266,7 @@ def filter(text: str, action: str, categories: tuple, threshold: float, output: 
             enabled=True,
             categories=category_enums,
             action=FilterAction(action),
-            thresholds={cat: threshold for cat in category_enums},
+            thresholds=dict.fromkeys(category_enums, threshold),
         )
         content_filter = ContentFilter(config)
 

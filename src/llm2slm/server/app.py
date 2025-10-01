@@ -233,11 +233,12 @@ async def anonymize_text(request: AnonymizeRequest) -> AnonymizeResponse:
         # Validate anonymization method
         try:
             method = AnonymizationMethod(request.method)
-        except ValueError:
+        except ValueError as err:
             raise HTTPException(
                 status_code=400,
-                detail=f"Invalid method '{request.method}'. Use: mask, redact, replace, hash, encrypt",
-            )
+                detail=f"Invalid method '{request.method}'. "
+                "Use: mask, redact, replace, hash, encrypt",
+            ) from err
 
         # Configure anonymizer
         config = AnonymizationConfig(
@@ -259,7 +260,7 @@ async def anonymize_text(request: AnonymizeRequest) -> AnonymizeResponse:
 
         # Detect PII
         pii_entities = anonymizer.detect_pii(request.text)
-        entity_types = list(set(e["entity_type"] for e in pii_entities))
+        entity_types = list({e["entity_type"] for e in pii_entities})
 
         # Anonymize text
         anonymized = anonymizer.anonymize(request.text)
@@ -301,11 +302,11 @@ async def filter_content(request: FilterRequest) -> FilterResponse:
         # Validate filter action
         try:
             action = FilterAction(request.action)
-        except ValueError:
+        except ValueError as err:
             raise HTTPException(
                 status_code=400,
                 detail=f"Invalid action '{request.action}'. Use: allow, flag, redact, reject",
-            )
+            ) from err
 
         # Convert category strings to enums
         categories = set()
@@ -325,7 +326,7 @@ async def filter_content(request: FilterRequest) -> FilterResponse:
             enabled=True,
             categories=categories,
             action=action,
-            thresholds={cat: request.threshold for cat in categories},
+            thresholds=dict.fromkeys(categories, request.threshold),
         )
 
         # Initialize filter
@@ -381,11 +382,11 @@ async def validate_privacy(request: ValidateRequest) -> ValidateResponse:
         # Validate privacy level
         try:
             level = PrivacyLevel(request.level)
-        except ValueError:
+        except ValueError as err:
             raise HTTPException(
                 status_code=400,
                 detail=f"Invalid level '{request.level}'. Use: none, low, medium, high, strict",
-            )
+            ) from err
 
         # Initialize validator
         validator = PrivacyValidator(level=level)

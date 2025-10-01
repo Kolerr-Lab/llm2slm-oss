@@ -10,7 +10,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 try:
     from presidio_analyzer import AnalyzerEngine
@@ -41,7 +41,7 @@ class AnonymizationConfig:
 
     enabled: bool = True
     method: AnonymizationMethod = AnonymizationMethod.MASK
-    entities: Set[str] = field(
+    entities: set[str] = field(
         default_factory=lambda: {
             "EMAIL_ADDRESS",
             "PHONE_NUMBER",
@@ -61,13 +61,13 @@ class AnonymizationConfig:
     language: str = "en"
     score_threshold: float = 0.6  # Confidence threshold for PII detection
     mask_char: str = "*"
-    custom_patterns: Dict[str, str] = field(default_factory=dict)
+    custom_patterns: dict[str, str] = field(default_factory=dict)
 
 
 class PIIAnonymizer:
     """PII detection and anonymization using Microsoft Presidio."""
 
-    def __init__(self, config: Optional[AnonymizationConfig] = None):
+    def __init__(self, config: AnonymizationConfig | None = None):
         """
         Initialize PII anonymizer.
 
@@ -88,7 +88,7 @@ class PIIAnonymizer:
         self.analyzer = AnalyzerEngine()
         self.anonymizer = AnonymizerEngine()
 
-    def detect_pii(self, text: str) -> List[Dict[str, Any]]:
+    def detect_pii(self, text: str) -> list[dict[str, Any]]:
         """
         Detect PII entities in text.
 
@@ -147,7 +147,7 @@ class PIIAnonymizer:
 
         return anonymized_result.text
 
-    def anonymize_batch(self, texts: List[str]) -> List[str]:
+    def anonymize_batch(self, texts: list[str]) -> list[str]:
         """
         Anonymize multiple texts.
 
@@ -159,7 +159,7 @@ class PIIAnonymizer:
         """
         return [self.anonymize(text) for text in texts]
 
-    def _get_operators(self) -> Dict[str, OperatorConfig]:
+    def _get_operators(self) -> dict[str, OperatorConfig]:
         """Get anonymization operators based on method."""
         if self.config.method == AnonymizationMethod.MASK:
             return {
@@ -206,7 +206,7 @@ class PIIAnonymizer:
 class RegexPIIAnonymizer:
     """Simple regex-based PII anonymizer (fallback when Presidio unavailable)."""
 
-    def __init__(self, config: Optional[AnonymizationConfig] = None):
+    def __init__(self, config: AnonymizationConfig | None = None):
         """Initialize regex-based anonymizer."""
         self.config = config or AnonymizationConfig()
 
@@ -219,7 +219,7 @@ class RegexPIIAnonymizer:
             "IP_ADDRESS": r"\b(?:\d{1,3}\.){3}\d{1,3}\b",
         }
 
-    def detect_pii(self, text: str) -> List[Dict[str, Any]]:
+    def detect_pii(self, text: str) -> list[dict[str, Any]]:
         """Detect PII using regex patterns."""
         results = []
         for entity_type, pattern in self.patterns.items():
@@ -257,7 +257,7 @@ class RegexPIIAnonymizer:
 
         return result
 
-    def anonymize_batch(self, texts: List[str]) -> List[str]:
+    def anonymize_batch(self, texts: list[str]) -> list[str]:
         """Anonymize multiple texts."""
         return [self.anonymize(text) for text in texts]
 

@@ -209,7 +209,8 @@ class PrivacyValidator:
                             },
                         )
                         recommendations.append(
-                            f"Detected {pii_count} PII entities. Consider anonymizing before processing."
+                            f"Detected {pii_count} PII entities. "
+                            "Consider anonymizing before processing."
                         )
                 except Exception as e:
                     logging.warning(f"PII detection failed: {e}")
@@ -229,7 +230,8 @@ class PrivacyValidator:
                             },
                         )
                         recommendations.append(
-                            f"Content policy violations detected: {', '.join(v['category'] for v in content_violations)}"
+                            f"Content policy violations detected: "
+                            f"{', '.join(v['category'] for v in content_violations)}"
                         )
                 except Exception as e:
                     logging.warning(f"Content filtering failed: {e}")
