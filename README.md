@@ -3,9 +3,13 @@
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 [![CI/CD](https://github.com/Kolerr-Lab/llm2slm-oss/actions/workflows/ci.yml/badge.svg)](https://github.com/Kolerr-Lab/llm2slm-oss/actions)
-[![Coverage](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss/branch/main/graph/badge.svg)](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss)
+[![codecov](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss/branch/master/graph/badge.svg?token=YOUR_TOKEN)](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
+[![Quality Gate](https://img.shields.io/badge/quality-A+-brightgreen.svg)](https://github.com/Kolerr-Lab/llm2slm-oss)
 
 A robust Python library and CLI tool for converting Large Language Models (LLMs) to optimized Small Language Models (SLMs). Streamline model deployment with provider integrations, containerization, and API access.
+
 ## Features
 
 - **CLI Interface**: Command-line tools for seamless model conversion and management.

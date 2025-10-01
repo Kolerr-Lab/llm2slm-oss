@@ -242,28 +242,54 @@ asyncio_mode = "auto"
 # Coverage configuration
 [tool.coverage.run]
 source = ["src/llm2slm"]
+branch = true
+parallel = true
+concurrency = ["multiprocessing", "thread"]
 omit = [
     "*/tests/*",
     "*/test_*",
     "*/__pycache__/*",
-    "*/migrations/*"
+    "*/migrations/*",
+    "*/.venv/*",
+    "*/venv/*",
+    "*/build/*",
+    "*/dist/*"
 ]
 
 [tool.coverage.report]
 exclude_lines = [
     "pragma: no cover",
     "def __repr__",
+    "def __str__",
     "if self.debug:",
     "if settings.DEBUG",
+    "if TYPE_CHECKING:",
     "raise AssertionError",
     "raise NotImplementedError",
     "if 0:",
+    "if False:",
     "if __name__ == .__main__.:",
     "class .*\\bProtocol\\):",
-    "@(abc\\.)?abstractmethod"
+    "@(abc\\.)?abstractmethod",
+    "@overload",
+    "except ImportError:",
+    "except ModuleNotFoundError:",
+    "\\.\\.\\."
 ]
 show_missing = true
 precision = 2
+skip_covered = false
+skip_empty = true
+sort = "Cover"
+fail_under = 60
 
 [tool.coverage.html]
 directory = "htmlcov"
+title = "LLM2SLM Coverage Report"
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[tool.coverage.json]
+output = "coverage.json"
+pretty_print = true

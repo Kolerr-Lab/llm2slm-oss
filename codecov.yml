@@ -1,0 +1,74 @@
+# Codecov Configuration
+# Documentation: https://docs.codecov.com/docs/codecov-yaml
+
+# Coverage targets
+coverage:
+  precision: 2
+  round: down
+  range: 70..100
+
+  status:
+    # Project coverage must not decrease
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        base: auto
+        if_ci_failed: error
+
+    # Patch coverage for new code
+    patch:
+      default:
+        target: 80%
+        threshold: 5%
+        base: auto
+        if_ci_failed: error
+
+# Comment on pull requests
+comment:
+  layout: "reach,diff,flags,tree,files"
+  behavior: default
+  require_changes: false
+  require_base: false
+  require_head: true
+
+# Ignore paths
+ignore:
+  - "tests/**/*"
+  - "docs/**/*"
+  - "**/__pycache__"
+  - "**/*.pyc"
+  - "htmlcov/**/*"
+  - "dist/**/*"
+  - "build/**/*"
+  - "*.egg-info/**/*"
+  - "venv/**/*"
+  - ".venv/**/*"
+  - "ui/**/*"
+  - "vscode-extension/**/*"
+  - "docker/**/*"
+  - "nginx/**/*"
+
+# GitHub checks
+github_checks:
+  annotations: true
+
+# Codecov flags for different test suites
+flags:
+  unit:
+    paths:
+      - src/llm2slm/
+    carryforward: true
+
+  integration:
+    paths:
+      - src/llm2slm/
+    carryforward: true
+
+  privacy:
+    paths:
+      - src/llm2slm/privacy/
+    carryforward: true
+
+# Notify settings
+slack_app: false
