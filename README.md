@@ -1,8 +1,6 @@
 # llm2slm
 
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![PyPI Version](https://img.shields.io/pypi/v/llm2slm)](https://pypi.org/project/llm2slm/)
-[![Docker Image](https://img.shields.io/docker/pulls/kolerrlab/llm2slm)](https://hub.docker.com/r/kolerrlab/llm2slm)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 [![CI/CD](https://github.com/Kolerr-Lab/llm2slm-oss/actions/workflows/ci.yml/badge.svg)](https://github.com/Kolerr-Lab/llm2slm-oss/actions)
 [![Coverage](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss/branch/main/graph/badge.svg)](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss)
@@ -12,6 +10,7 @@ A robust Python library and CLI tool for converting Large Language Models (LLMs)
 
 - **CLI Interface**: Command-line tools for seamless model conversion and management.
 - **Provider Integrations**: Support for OpenAI, Anthropic, Google Gemini, and LiquidAI providers.
+- **Privacy & Security**: PII detection, anonymization, content filtering, and compliance validation.
 - **Server API**: FastAPI-based REST API for remote model operations.
 - **Docker Support**: Containerized deployment for easy scaling.
 - **CI/CD Pipelines**: Automated testing and deployment via GitHub Actions.
@@ -22,6 +21,7 @@ A robust Python library and CLI tool for converting Large Language Models (LLMs)
 ## Installation
 
 ### Prerequisites
+
 - Python 3.8 or higher
 - pip (Python package installer)
 
@@ -39,6 +39,14 @@ cd llm2slm
 pip install -e .
 ```
 
+### Install with Privacy Features
+
+```bash
+pip install llm2slm[privacy]
+```
+
+Includes PII detection (Presidio), content filtering (Detoxify), and compliance tools.
+
 ### Docker Installation
 
 ```bash
@@ -51,21 +59,25 @@ docker run -p 8000:8000 llm2slm
 ### CLI
 
 Show version:
+
 ```bash
 llm2slm version
 ```
 
 List available providers:
+
 ```bash
 llm2slm providers
 ```
 
 Validate setup:
+
 ```bash
 llm2slm validate
 ```
 
 Convert an LLM to SLM:
+
 ```bash
 # Using OpenAI (default)
 llm2slm convert openai/gpt-4 ./my-slm --provider openai --compression-factor 0.5
@@ -83,11 +95,13 @@ llm2slm convert liquid-1.0 ./my-slm --provider liquid --compression-factor 0.5
 ### API Server
 
 Start the server:
+
 ```bash
 llm2slm serve --host 0.0.0.0 --port 8000
 ```
 
 Example API request:
+
 ```bash
 curl -X POST "http://localhost:8000/convert" \
     -H "Content-Type: application/json" \
@@ -123,17 +137,18 @@ result = await convert_model(
     compression_factor=0.5
 )
 ```
-```
 
 ## Configuration
 
 Configure providers via environment variables:
+
 - `OPENAI_API_KEY`: Your OpenAI API key
 - `ANTHROPIC_API_KEY`: Your Anthropic API key
 - `GOOGLE_API_KEY`: Your Google API key
 - `LIQUID_API_KEY`: Your LiquidAI API key
 
 Or use the CLI config commands:
+
 ```bash
 llm2slm config --set OPENAI_API_KEY your-openai-key-here
 llm2slm config --set ANTHROPIC_API_KEY your-anthropic-key-here
@@ -141,27 +156,66 @@ llm2slm config --set GOOGLE_API_KEY your-google-key-here
 llm2slm config --set LIQUID_API_KEY your-liquid-key-here
 ```
 
+## Privacy & Security
+
+LLM2SLM includes comprehensive privacy features for enterprise and regulated environments:
+
+### PII Anonymization
+
+```bash
+# Detect and anonymize PII
+llm2slm anonymize "Contact john@example.com" --method mask
+
+# Supported: EMAIL, PHONE, SSN, CREDIT_CARD, PERSON, LOCATION, IP_ADDRESS
+```
+
+### Content Filtering
+
+```bash
+# Filter harmful content
+llm2slm filter "Your text here" --action flag --categories toxicity hate_speech
+```
+
+### Privacy Validation
+
+```python
+from llm2slm.privacy import PrivacyValidator, PrivacyLevel, PIIAnonymizer, ContentFilter
+
+# Validate text for compliance
+validator = PrivacyValidator(level=PrivacyLevel.HIGH)
+result = validator.validate(text, anonymizer, content_filter)
+
+print(f"Passed: {result.passed}")
+print(f"PII detected: {result.pii_detected}")
+print(f"Violations: {result.content_violations}")
+```
+
+For comprehensive privacy documentation, see [PRIVACY.md](PRIVACY.md).
+
 ## Development
 
 ### Setup
+
 ```bash
 pip install -r requirements-dev.txt
 pre-commit install
 ```
 
 ### Testing
+
 ```bash
 pytest --cov=llm2slm
 ```
 
 ### Building
+
 ```bash
 python -m build
 ```
 
 ## Project Structure
 
-```
+```plaintext
 src/llm2slm/
 ├── __init__.py          # Package initialization and version info
 ├── cli.py               # Command-line interface
@@ -193,6 +247,10 @@ src/llm2slm/
 - **Repository**: [https://github.com/Kolerr-Lab/llm2slm-oss](https://github.com/Kolerr-Lab/llm2slm-oss)
 - **Issues**: [GitHub Issues](https://github.com/Kolerr-Lab/llm2slm-oss/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/Kolerr-Lab/llm2slm-oss/discussions)
+
+## GitHub Repository Setup
+
+If you're forking or deploying this repository, you'll need to configure GitHub secrets and environments for the CI/CD pipeline. See [GITHUB_SETUP.md](GITHUB_SETUP.md) for detailed instructions.
 
 ## Contributing
 

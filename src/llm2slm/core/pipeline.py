@@ -10,6 +10,21 @@ to Small Language Models (SLMs). It handles the end-to-end process including mod
 processing, and export, designed for production deployment with robust error handling and logging.
 """
 
+# Check for privacy module availability
+try:
+    from llm2slm.privacy import (
+        AnonymizationConfig,
+        ContentFilter,
+        FilterConfig,
+        PIIAnonymizer,
+        PrivacyValidator,
+        detoxify_available,
+        presidio_available,
+    )
+
+    PRIVACY_AVAILABLE = True
+except ImportError:
+    PRIVACY_AVAILABLE = False
 
 # Configure logging for production
 logging.basicConfig(
@@ -53,7 +68,54 @@ class Pipeline:
             raise PipelineError("Invalid configuration provided.")
         self.config = config
         self.steps = steps or ["load_model", "process_model", "export_slm"]
+
+        # Initialize privacy components if enabled and available
+        self.anonymizer: Optional[Any] = None
+        self.content_filter: Optional[Any] = None
+        self.privacy_validator: Optional[Any] = None
+
+        if PRIVACY_AVAILABLE and self.config.get("privacy", {}).get("enabled", False):
+            self._init_privacy_components()
+
         logger.info("Pipeline initialized with steps: %s", self.steps)
+
+    def _init_privacy_components(self) -> None:
+        """Initialize privacy components based on configuration."""
+        privacy_config = self.config.get("privacy", {})
+
+        try:
+            # Initialize PII anonymizer if presidio is available
+            if presidio_available() and privacy_config.get("anonymize_pii", False):
+                anon_config = AnonymizationConfig(
+                    enabled=True,
+                    method=privacy_config.get("anonymization_method", "mask"),
+                    entities=set(privacy_config.get("pii_entities", [])),
+                )
+                self.anonymizer = PIIAnonymizer(anon_config)
+                logger.info("PII anonymizer initialized")
+
+            # Initialize content filter if detoxify is available
+            if detoxify_available() and privacy_config.get("filter_content", False):
+                filter_config = FilterConfig(
+                    enabled=True,
+                    categories=set(privacy_config.get("content_categories", [])),
+                    action=privacy_config.get("filter_action", "flag"),
+                )
+                self.content_filter = ContentFilter(filter_config)
+                logger.info("Content filter initialized")
+
+            # Initialize privacy validator
+            if privacy_config.get("validate_privacy", True):
+                from llm2slm.privacy.validator import PrivacyLevel
+
+                level = PrivacyLevel(privacy_config.get("privacy_level", "medium"))
+                self.privacy_validator = PrivacyValidator(level=level)
+                logger.info(f"Privacy validator initialized with level: {level.value}")
+
+        except Exception as e:
+            logger.warning(f"Failed to initialize privacy components: {e}")
+            if privacy_config.get("strict_privacy", False):
+                raise PipelineError(f"Privacy initialization failed: {e}") from e
 
     async def run(self) -> Dict[str, Any]:
         """
@@ -107,8 +169,63 @@ class Pipeline:
         elif step == "process_model":
             # Placeholder: Process the model
             return {"model_processed": True}
+        elif step == "anonymize_data":
+            # Privacy step: Anonymize PII in data
+            return await self._anonymize_data()
+        elif step == "filter_content":
+            # Privacy step: Filter harmful content
+            return await self._filter_content()
+        elif step == "validate_privacy":
+            # Privacy step: Validate privacy compliance
+            return await self._validate_privacy()
         elif step == "export_slm":
             # Placeholder: Export SLM
             return {"slm_exported": True}
         else:
             raise PipelineError(f"Unknown step: {step}")
+
+    async def _anonymize_data(self) -> Dict[str, Any]:
+        """Anonymize PII in data."""
+        if not self.anonymizer:
+            logger.warning("Anonymizer not initialized, skipping anonymization")
+            return {"anonymized": False, "reason": "anonymizer_not_available"}
+
+        try:
+            # This is a placeholder - in real implementation, you'd anonymize actual data
+            logger.info("Anonymizing PII in data...")
+            return {"anonymized": True, "method": self.anonymizer.config.method.value}
+        except Exception as e:
+            logger.error(f"Anonymization failed: {e}")
+            raise PipelineError(f"Anonymization failed: {e}") from e
+
+    async def _filter_content(self) -> Dict[str, Any]:
+        """Filter harmful content."""
+        if not self.content_filter:
+            logger.warning("Content filter not initialized, skipping filtering")
+            return {"filtered": False, "reason": "filter_not_available"}
+
+        try:
+            # This is a placeholder - in real implementation, you'd filter actual content
+            logger.info("Filtering content...")
+            return {"filtered": True, "action": self.content_filter.config.action.value}
+        except Exception as e:
+            logger.error(f"Content filtering failed: {e}")
+            raise PipelineError(f"Content filtering failed: {e}") from e
+
+    async def _validate_privacy(self) -> Dict[str, Any]:
+        """Validate privacy compliance."""
+        if not self.privacy_validator:
+            logger.warning("Privacy validator not initialized, skipping validation")
+            return {"validated": False, "reason": "validator_not_available"}
+
+        try:
+            # This is a placeholder - in real implementation, you'd validate actual data
+            logger.info("Validating privacy compliance...")
+            return {
+                "validated": True,
+                "level": self.privacy_validator.level.value,
+                "audit_entries": len(self.privacy_validator.audit_log.entries),
+            }
+        except Exception as e:
+            logger.error(f"Privacy validation failed: {e}")
+            raise PipelineError(f"Privacy validation failed: {e}") from e

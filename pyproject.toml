@@ -75,8 +75,14 @@ tensorrt = [
     "tensorrt>=8.6.0",
     "pycuda>=2022.2"
 ]
+privacy = [
+    "presidio-analyzer>=2.2.0",
+    "presidio-anonymizer>=2.2.0",
+    "detoxify>=0.5.0",
+    "spacy>=3.0.0"
+]
 all = [
-    "llm2slm[dev,server,onnx,tensorrt]"
+    "llm2slm[dev,server,onnx,tensorrt,privacy]"
 ]
 
 [project.urls]
@@ -184,7 +190,7 @@ known_third_party = ["fastapi", "pydantic", "httpx", "numpy", "yaml"]
 
 # MyPy configuration
 [tool.mypy]
-python_version = "3.8"
+python_version = "3.9"
 warn_return_any = true
 warn_unused_configs = true
 warn_redundant_casts = true

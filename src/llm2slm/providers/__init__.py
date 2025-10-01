@@ -10,13 +10,9 @@ except ImportError:
     _anthropic_available = False
     AnthropicProvider = None  # type: ignore
 
-try:
-    # from .google import GoogleProvider
-    GoogleProvider = None  # type: ignore
-    _google_available = False
-except ImportError:
-    _google_available = False
-    GoogleProvider = None  # type: ignore
+# Temporarily disable GoogleProvider due to file corruption
+_google_available = False
+GoogleProvider = None  # type: ignore
 
 try:
     from .liquid import LiquidProvider

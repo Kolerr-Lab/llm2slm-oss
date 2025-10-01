@@ -171,13 +171,129 @@ def validate() -> None:
 
     # Check core modules
     try:
-
         click.echo("✓ Core SLM modules imported successfully")
     except Exception as e:
         click.echo(f"✗ Core module import failed: {e}", err=True)
         sys.exit(1)
 
+    # Check privacy modules (optional)
+    try:
+        from llm2slm.privacy import detoxify_available, presidio_available
+
+        if presidio_available():
+            click.echo("✓ Privacy: Presidio (PII detection) available")
+        else:
+            click.echo("ℹ Privacy: Presidio not installed (optional)")
+
+        if detoxify_available():
+            click.echo("✓ Privacy: Detoxify (content filtering) available")
+        else:
+            click.echo("ℹ Privacy: Detoxify not installed (optional)")
+    except ImportError:
+        click.echo(
+            "ℹ Privacy: Privacy module not available (install with: pip install llm2slm[privacy])"
+        )
+
     click.echo("\nSetup validation completed!")
+
+
+@cli.command()
+@click.argument("text")
+@click.option("--method", default="mask", help="Anonymization method: mask, redact, replace, hash")
+@click.option(
+    "--entities",
+    multiple=True,
+    default=["EMAIL_ADDRESS", "PHONE_NUMBER"],
+    help="PII entities to anonymize",
+)
+@click.option("--output", "-o", type=click.File("w"), help="Output file (default: stdout)")
+def anonymize(text: str, method: str, entities: tuple, output: click.File) -> None:  # type: ignore
+    """Anonymize PII in text."""
+    try:
+        from llm2slm.privacy import AnonymizationConfig, AnonymizationMethod, PIIAnonymizer
+
+        config = AnonymizationConfig(
+            enabled=True, method=AnonymizationMethod(method), entities=set(entities)
+        )
+        anonymizer = PIIAnonymizer(config)
+
+        # Anonymize text
+        result = anonymizer.anonymize(text)
+
+        # Output result
+        if output:
+            output.write(result)
+        else:
+            click.echo(result)
+
+    except ImportError:
+        click.echo(
+            "Error: Privacy module not installed. Install with: pip install llm2slm[privacy]",
+            err=True,
+        )
+        sys.exit(1)
+    except Exception as e:
+        logger.error(f"Anonymization failed: {e}")
+        click.echo(f"Error: {e}", err=True)
+        sys.exit(1)
+
+
+@cli.command()
+@click.argument("text")
+@click.option("--action", default="flag", help="Filter action: allow, flag, redact, reject")
+@click.option(
+    "--categories",
+    multiple=True,
+    default=["toxicity", "severe_toxicity"],
+    help="Content categories to filter",
+)
+@click.option("--threshold", default=0.7, type=float, help="Detection threshold (0.0-1.0)")
+@click.option("--output", "-o", type=click.File("w"), help="Output file (default: stdout)")
+def filter(text: str, action: str, categories: tuple, threshold: float, output: click.File) -> None:  # type: ignore
+    """Filter harmful content in text."""
+    try:
+        from llm2slm.privacy import ContentCategory, ContentFilter, FilterAction, FilterConfig
+
+        # Convert category strings to enums
+        category_enums = set()
+        for cat in categories:
+            try:
+                category_enums.add(ContentCategory(cat))
+            except ValueError:
+                click.echo(f"Warning: Unknown category '{cat}', skipping", err=True)
+
+        config = FilterConfig(
+            enabled=True,
+            categories=category_enums,
+            action=FilterAction(action),
+            thresholds={cat: threshold for cat in category_enums},
+        )
+        content_filter = ContentFilter(config)
+
+        # Filter text
+        result = content_filter.filter(text)
+
+        # Output result with metadata
+        output_text = f"Passed: {result.passed}\n"
+        if result.violations:
+            output_text += f"Violations: {', '.join(v['category'] for v in result.violations)}\n"
+        output_text += f"\nFiltered Text:\n{result.text}\n"
+
+        if output:
+            output.write(output_text)
+        else:
+            click.echo(output_text)
+
+    except ImportError:
+        click.echo(
+            "Error: Privacy module not installed. Install with: pip install llm2slm[privacy]",
+            err=True,
+        )
+        sys.exit(1)
+    except Exception as e:
+        logger.error(f"Content filtering failed: {e}")
+        click.echo(f"Error: {e}", err=True)
+        sys.exit(1)
 
 
 def main() -> None:  # type: ignore[no-untyped-def]
