@@ -3,7 +3,7 @@
 [![Python Version](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.txt)
 [![CI/CD](https://github.com/Kolerr-Lab/llm2slm-oss/actions/workflows/ci.yml/badge.svg)](https://github.com/Kolerr-Lab/llm2slm-oss/actions)
-[![codecov](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss/branch/master/graph/badge.svg?token=YOUR_TOKEN)](https://codecov.io/gh/Kolerr-Lab/llm2slm-oss)
+[![PyPI version](https://badge.fury.io/py/llm2slm.svg)](https://pypi.org/project/llm2slm/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Imports: isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://pycqa.github.io/isort/)
 [![Quality Gate](https://img.shields.io/badge/quality-A+-brightgreen.svg)](https://github.com/Kolerr-Lab/llm2slm-oss)
